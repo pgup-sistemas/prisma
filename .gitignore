@@ -1,0 +1,26 @@
+/vendor/
+/.env
+/node_modules/
+/storage/uploads/*
+!/storage/uploads/.gitkeep
+/storage/qrcodes/*
+!/storage/qrcodes/.gitkeep
+/storage/qr-logos/*
+!/storage/qr-logos/.gitkeep
+/storage/batches/*
+!/storage/batches/.gitkeep
+/storage/bookmarks/*
+!/storage/bookmarks/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+.DS_Store
+*.log
+composer.phar
+
+# Desktop agent (Launcher) vive em repositório próprio — veja desktop-agent/README.md
+/desktop-agent/
+
+# Instaladores binários — distribuídos via GitHub Releases do repositório do Launcher,
+# não versionados aqui (arquivos grandes, GitHub bloqueia >100MB).
+/public/downloads/*
+!/public/downloads/.gitkeep

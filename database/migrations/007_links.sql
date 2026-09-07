@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS links (
+    id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    uuid            CHAR(36)     NOT NULL UNIQUE,
+    user_id         BIGINT UNSIGNED NOT NULL,
+    organization_id BIGINT UNSIGNED NULL,
+    slug            VARCHAR(40)  NOT NULL UNIQUE COMMENT 'codigo curto',
+    destination     TEXT         NOT NULL COMMENT 'URL de destino final',
+    title           VARCHAR(200),
+    tags_json       JSON         NULL COMMENT 'array de tags',
+    wrapper_type    ENUM('none','intersticial','utm','conditional','ab','cloaking')
+                    NOT NULL DEFAULT 'none',
+    utm_json        JSON         NULL COMMENT 'source,medium,campaign,term,content',
+    conditions_json JSON         NULL COMMENT 'array de {field,operator,value,destination}',
+    ab_variants     JSON         NULL COMMENT 'array de {url,weight} soma = 100',
+    intersticial_template VARCHAR(40),
+    expires_at      TIMESTAMP    NULL,
+    click_count     INT UNSIGNED NOT NULL DEFAULT 0,
+    active          TINYINT(1)   NOT NULL DEFAULT 1,
+    created_at      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE SET NULL,
+    INDEX idx_slug    (slug),
+    INDEX idx_user    (user_id),
+    INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
