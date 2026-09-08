@@ -89,6 +89,9 @@ class LauncherAgentController extends Controller
      * já que o corpo é enviado como application/x-www-form-urlencoded (requisição "simples").
      * Não persiste no banco: é um utilitário rápido, igual ao /qr/quick da Home pública.
      */
+    /** Tipos aceitos por essa rota — subconjunto do QRGenerator, o que a busca do agente oferece hoje. */
+    private const QUICK_QR_TYPES = ['url', 'whatsapp', 'pix', 'vcard'];
+
     public function quickQr(): void
     {
         header('Access-Control-Allow-Origin: *');
@@ -101,15 +104,33 @@ class LauncherAgentController extends Controller
 
         Middleware::rateLimit('agent:qr:' . $user['uuid'], 30, 60);
 
-        $url = trim((string) $this->request->input('url', ''));
-        $validator = Validator::make(['url' => $url], ['url' => 'required|url']);
+        $type = (string) $this->request->input('type', 'url');
+        if (!in_array($type, self::QUICK_QR_TYPES, true)) {
+            $this->json(['success' => false, 'error' => 'Tipo de QR inválido.'], 422);
+            return;
+        }
+
+        // Compatibilidade: chamadas antigas mandam só "url" (sem "type"), continuam funcionando.
+        // PIX é um caso especial: o campo da chave PIX se chama "key" no QRGenerator, o que
+        // colidiria com o parâmetro "key" usado pra autenticação (a Chave de API) — por isso
+        // o cliente manda "pix_key" nessa rota, e a gente remapeia aqui antes de validar.
+        if ($type === 'pix') {
+            $fields = $this->request->only(['name', 'city', 'amount', 'txid', 'description']);
+            $fields['key'] = trim((string) $this->request->input('pix_key', ''));
+        } elseif ($type === 'url') {
+            $fields = ['url' => trim((string) $this->request->input('url', ''))];
+        } else {
+            $fields = $this->request->only(QRGenerator::TYPE_FIELDS[$type]);
+        }
+
+        $validator = Validator::make($fields, QRGenerator::TYPE_RULES[$type]);
         if ($validator->fails()) {
-            $this->json(['success' => false, 'error' => 'URL inválida.'], 422);
+            $this->json(['success' => false, 'error' => 'Dados inválidos para gerar o QR.', 'details' => $validator->errors()], 422);
             return;
         }
 
         $generator = new QRGenerator();
-        $content = $generator->buildContent('url', ['url' => $url]);
+        $content = $generator->buildContent($type, $fields);
 
         $tmpBase = 'agent-' . uuid4();
         $files = $generator->render($content, [

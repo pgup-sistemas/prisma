@@ -150,7 +150,25 @@
                     <li class="d-flex gap-3">
                         <i class="bi bi-qr-code flex-shrink-0 mt-1" style="color:var(--color-accent);"></i>
                         <span style="color:var(--color-text-secondary);font-size:.92rem;">
-                            Cole uma URL e gere <strong style="color:var(--color-text-primary);">QR Code ou link curto</strong> ali mesmo, sem abrir o navegador.
+                            Cole uma URL e gere <strong style="color:var(--color-text-primary);">QR Code ou link curto</strong> ali mesmo — baixe o PNG ou copie a imagem direto pra área de transferência, sem abrir o navegador.
+                        </span>
+                    </li>
+                    <li class="d-flex gap-3">
+                        <i class="bi bi-terminal flex-shrink-0 mt-1" style="color:var(--color-accent);"></i>
+                        <span style="color:var(--color-text-secondary);font-size:.92rem;">
+                            Comandos rápidos no mesmo campo de busca: <code>wa:</code>, <code>pix:</code> e <code>vcard:</code> geram QR Code de WhatsApp, Pix e cartão de contato sem sair do teclado.
+                        </span>
+                    </li>
+                    <li class="d-flex gap-3">
+                        <i class="bi bi-funnel flex-shrink-0 mt-1" style="color:var(--color-accent);"></i>
+                        <span style="color:var(--color-text-secondary);font-size:.92rem;">
+                            Prefira <code>favorito:</code> ou <code>arquivo:</code> pra restringir a busca só a uma dessas fontes quando o resultado certo está perdido no meio dos outros.
+                        </span>
+                    </li>
+                    <li class="d-flex gap-3">
+                        <i class="bi bi-clock-history flex-shrink-0 mt-1" style="color:var(--color-accent);"></i>
+                        <span style="color:var(--color-text-secondary);font-size:.92rem;">
+                            Os últimos QR Codes e links gerados ficam em <strong style="color:var(--color-text-primary);">"Recentes"</strong> na tela inicial da busca — nada se perde se você fechar antes de copiar.
                         </span>
                     </li>
                     <li class="d-flex gap-3">
@@ -169,6 +187,12 @@
                         <i class="bi bi-window flex-shrink-0 mt-1" style="color:var(--color-accent);"></i>
                         <span style="color:var(--color-text-secondary);font-size:.92rem;">
                             O atalho abre em <strong style="color:var(--color-text-primary);">qualquer programa</strong> — não precisa estar com o navegador aberto.
+                        </span>
+                    </li>
+                    <li class="d-flex gap-3">
+                        <i class="bi bi-arrow-repeat flex-shrink-0 mt-1" style="color:var(--color-accent);"></i>
+                        <span style="color:var(--color-text-secondary);font-size:.92rem;">
+                            Atualiza sozinho quando sai uma versão nova — sem precisar baixar e instalar de novo manualmente.
                         </span>
                     </li>
                 </ul>
