@@ -44,90 +44,54 @@
     <div class="spectrum-bar"></div>
 
     <div class="d-flex">
-        <?php $sidebarContent = function () use ($auth_user) { ?>
+        <?php
+        $currentPath = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '', '/');
+        $isActive = function (string $path) use ($currentPath): bool {
+            $target = rtrim((string) parse_url(url($path), PHP_URL_PATH), '/');
+            return $currentPath !== '' && ($currentPath === $target || str_starts_with($currentPath, $target . '/'));
+        };
+        $sidebarGroups = [
+            'QR Code' => [
+                ['/generate',  'bi-qr-code',        'Gerar QR'],
+                ['/history',   'bi-clock-history',  'Histórico'],
+                ['/analytics', 'bi-graph-up',        'Analytics'],
+                ['/batch',     'bi-collection',      'Lote'],
+            ],
+            'Links' => [
+                ['/links',  'bi-link-45deg',      'Encurtador'],
+                ['/hub',    'bi-grid-3x3-gap',    'Hub Digital'],
+                ['/agenda', 'bi-calendar-check',  'Agenda'],
+            ],
+            'Mais' => [
+                ['/bookmarks', 'bi-bookmark-star',    'Favoritos'],
+                ['/tools',     'bi-tools',            'Ferramentas'],
+                ['/scanner',   'bi-camera',            'Scanner'],
+                ['/download',  'bi-lightning-charge',  'Launcher'],
+            ],
+        ];
+        if ($auth_user && in_array($auth_user['role'], ['admin', 'superadmin'], true)) {
+            $sidebarGroups['Admin'] = [
+                ['/admin/users',    'bi-people', 'Usuários'],
+                ['/admin/settings', 'bi-gear',   'Configurações'],
+            ];
+        }
+        $sidebarContent = function () use ($sidebarGroups, $isActive) { ?>
             <div class="sidebar p-3">
-                <ul class="nav nav-pills flex-column gap-1">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/dashboard') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                        </a>
-                    </li>
-
-                    <li class="nav-item mt-3"><small class="text-uppercase" style="color:var(--color-text-muted);">QR Code</small></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/generate') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-qr-code me-2"></i>Gerar QR
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/history') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-clock-history me-2"></i>Histórico
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/analytics') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-graph-up me-2"></i>Analytics
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/batch') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-collection me-2"></i>Lote
-                        </a>
-                    </li>
-
-                    <li class="nav-item mt-3"><small class="text-uppercase" style="color:var(--color-text-muted);">Links</small></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/links') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-link-45deg me-2"></i>Encurtador
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/hub') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-grid-3x3-gap me-2"></i>Hub Digital
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/agenda') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-calendar-check me-2"></i>Agenda
-                        </a>
-                    </li>
-
-                    <li class="nav-item mt-3"><small class="text-uppercase" style="color:var(--color-text-muted);">Mais</small></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/bookmarks') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-bookmark-star me-2"></i>Favoritos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/tools') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-tools me-2"></i>Ferramentas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/scanner') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-camera me-2"></i>Scanner
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/download') ?>" style="color:var(--color-text-secondary);">
-                            <i class="bi bi-lightning-charge me-2"></i>Launcher Desktop
-                        </a>
-                    </li>
-
-                    <?php if ($auth_user && in_array($auth_user['role'], ['admin', 'superadmin'], true)): ?>
-                        <li class="nav-item mt-3"><small class="text-uppercase" style="color:var(--color-text-muted);">Admin</small></li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= url('/admin/users') ?>" style="color:var(--color-text-secondary);">
-                                <i class="bi bi-people me-2"></i>Usuários
+                <div class="sidebar-cards sidebar-cards-1col">
+                    <a class="sidebar-card sidebar-card-wide<?= $isActive('/dashboard') ? ' active' : '' ?>" href="<?= url('/dashboard') ?>">
+                        <i class="bi bi-speedometer2"></i>Dashboard
+                    </a>
+                </div>
+                <?php foreach ($sidebarGroups as $title => $items): ?>
+                    <div class="sidebar-group-title"><?= e($title) ?></div>
+                    <div class="sidebar-cards">
+                        <?php foreach ($items as [$path, $icon, $label]): ?>
+                            <a class="sidebar-card<?= $isActive($path) ? ' active' : '' ?>" href="<?= url($path) ?>">
+                                <i class="bi <?= $icon ?>"></i><?= e($label) ?>
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= url('/admin/settings') ?>" style="color:var(--color-text-secondary);">
-                                <i class="bi bi-gear me-2"></i>Configurações
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
             </div>
         <?php }; ?>
 

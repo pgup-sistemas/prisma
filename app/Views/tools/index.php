@@ -8,36 +8,49 @@
         <div class="spectrum-bar rounded mx-auto" style="max-width:240px;"></div>
     </div>
 
-    <ul class="nav nav-pills flex-nowrap overflow-auto gap-1 mb-4 pb-2" id="tools-nav" style="scrollbar-width:thin;">
+    <div id="tools-nav" class="mb-4">
         <?php
-        $tools = [
-            'image'     => ['bi-image',              'Imagens'],
-            'pdf'       => ['bi-file-earmark-pdf',    'Reduzir PDF'],
-            'pdf2md'    => ['bi-markdown',            'PDF → Markdown'],
-            'cep'       => ['bi-geo-alt',            'CEP'],
-            'docs'      => ['bi-person-vcard',       'CPF/CNPJ'],
-            'password'  => ['bi-shield-lock',        'Senha'],
-            'currency'  => ['bi-currency-exchange',  'Moedas'],
-            'imc'       => ['bi-heart-pulse',        'IMC'],
-            'units'     => ['bi-rulers',             'Unidades'],
-            'words'     => ['bi-file-text',          'Palavras'],
-            'lorem'     => ['bi-textarea-t',         'Lorem Ipsum'],
-            'colors'    => ['bi-eyedropper',         'Cores'],
-            'uuid'      => ['bi-fingerprint',        'UUID'],
-            'base64'    => ['bi-code-square',        'Base64'],
-            'json'      => ['bi-braces',             'JSON'],
-            'timestamp' => ['bi-clock-history',      'Timestamp'],
+        $toolGroups = [
+            'Arquivos' => [
+                'image'  => ['bi-image',           'Imagens'],
+                'pdf'    => ['bi-file-earmark-pdf', 'Reduzir PDF'],
+                'pdf2md' => ['bi-markdown',         'PDF → Markdown'],
+            ],
+            'Consulta e Saúde' => [
+                'cep'  => ['bi-geo-alt',        'CEP'],
+                'docs' => ['bi-person-vcard',   'CPF/CNPJ'],
+                'imc'  => ['bi-heart-pulse',    'IMC'],
+            ],
+            'Conversores' => [
+                'currency'  => ['bi-currency-exchange', 'Moedas'],
+                'units'     => ['bi-rulers',             'Unidades'],
+                'base64'    => ['bi-code-square',        'Base64'],
+                'timestamp' => ['bi-clock-history',      'Timestamp'],
+            ],
+            'Geradores' => [
+                'password' => ['bi-shield-lock', 'Senha'],
+                'uuid'     => ['bi-fingerprint', 'UUID'],
+                'lorem'    => ['bi-textarea-t',  'Lorem Ipsum'],
+            ],
+            'Desenvolvedor' => [
+                'json'   => ['bi-braces',      'JSON'],
+                'colors' => ['bi-eyedropper',  'Cores'],
+                'words'  => ['bi-file-text',   'Palavras'],
+            ],
         ];
         $first = true;
-        foreach ($tools as $key => [$icon, $label]):
+        foreach ($toolGroups as $groupTitle => $groupTools):
         ?>
-        <li class="nav-item flex-shrink-0">
-            <button class="nav-link <?= $first ? 'active' : '' ?>" data-bs-toggle="pill" data-bs-target="#tool-<?= $key ?>" type="button">
-                <i class="bi <?= $icon ?> me-1"></i><?= $label ?>
-            </button>
-        </li>
-        <?php $first = false; endforeach; ?>
-    </ul>
+        <div class="tools-group-title"><?= e($groupTitle) ?></div>
+        <div class="tools-card-grid">
+            <?php foreach ($groupTools as $key => [$icon, $label]): ?>
+                <button class="tool-card <?= $first ? 'active' : '' ?>" data-bs-target="#tool-<?= $key ?>" type="button">
+                    <i class="bi <?= $icon ?>"></i><span><?= $label ?></span>
+                </button>
+            <?php $first = false; endforeach; ?>
+        </div>
+        <?php endforeach; ?>
+    </div>
 
     <div class="tab-content">
 
@@ -503,17 +516,33 @@
     });
     populateUnitSelects();
 
-    // Ativa a aba indicada na URL (ex: vindo da Home via /tools#tool-cep)
-    if (window.location.hash) {
-        var targetPane = document.querySelector(window.location.hash);
-        var targetTab = document.querySelector('[data-bs-target="' + window.location.hash + '"]');
-        if (targetPane && targetTab) {
-            document.querySelectorAll('#tools-nav .nav-link').forEach(function (btn) { btn.classList.remove('active'); });
-            document.querySelectorAll('.tab-pane').forEach(function (pane) { pane.classList.remove('show', 'active'); });
-            targetTab.classList.add('active');
-            targetPane.classList.add('show', 'active');
+    // Troca de aba controlada manualmente (não usamos o plugin Tab do Bootstrap
+    // aqui: ele exige que os gatilhos sejam filhos diretos de um .nav/.list-group,
+    // e nossos cards ficam agrupados em grades por categoria, um nível mais fundo).
+    function activateTool(targetSelector, scrollIntoView) {
+        var targetPane = document.querySelector(targetSelector);
+        var targetTab = document.querySelector('#tools-nav [data-bs-target="' + targetSelector + '"]');
+        if (!targetPane || !targetTab) return false;
+
+        document.querySelectorAll('#tools-nav .tool-card').forEach(function (btn) { btn.classList.remove('active'); });
+        document.querySelectorAll('.tab-pane').forEach(function (pane) { pane.classList.remove('show', 'active'); });
+        targetTab.classList.add('active');
+        targetPane.classList.add('show', 'active');
+        if (scrollIntoView) {
             targetTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
+        return true;
+    }
+
+    document.querySelectorAll('#tools-nav .tool-card').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            activateTool(btn.getAttribute('data-bs-target'), false);
+        });
+    });
+
+    // Ativa a aba indicada na URL (ex: vindo da Home via /tools#tool-cep)
+    if (window.location.hash) {
+        activateTool(window.location.hash, true);
     }
 
     // ── Conversor de Moedas ─────────────────────────────────────────────
