@@ -113,3 +113,35 @@
         </div>
     </div>
 </div>
+
+<?php if (!empty($profile['api_key'])):
+    $deepLink = 'prisma-launcher://conectar?' . http_build_query([
+        'server' => rtrim(url(''), '/'),
+        'uid'    => $profile['uuid'] ?? '',
+        'key'    => $profile['api_key'],
+    ]);
+?>
+<!-- Pareamento com o Launcher desktop -->
+<div class="row g-4 mt-1">
+    <div class="col-12">
+        <div class="p-3 rounded d-flex flex-wrap align-items-center gap-3"
+             style="background:rgba(46,134,171,.08);border:1px solid rgba(46,134,171,.25);backdrop-filter:blur(6px);">
+            <i class="bi bi-lightning-charge-fill flex-shrink-0" style="font-size:1.5rem;color:var(--color-accent);"></i>
+            <div class="flex-grow-1" style="min-width:220px;">
+                <strong style="color:var(--color-text-primary);">PRISMA Launcher no seu computador</strong>
+                <p class="mb-0 small" style="color:var(--color-text-secondary);">
+                    Já instalou? Conecte sua conta com um clique. Ainda não? Baixe grátis.
+                </p>
+            </div>
+            <div class="d-flex gap-2 flex-shrink-0">
+                <a href="<?= e($deepLink) ?>" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plug"></i> Conectar Launcher
+                </a>
+                <a href="<?= url('/download') ?>" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-download"></i> Baixar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
