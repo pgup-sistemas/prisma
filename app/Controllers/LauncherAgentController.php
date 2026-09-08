@@ -17,7 +17,7 @@ use App\Services\ShortURLService;
 class LauncherAgentController extends Controller
 {
     /** Versão mais recente publicada do agente de desktop (mantida em sincronia com desktop-agent/package.json). */
-    private const LATEST_VERSION = '0.1.0';
+    private const LATEST_VERSION = '0.2.0';
 
     /** Limite de itens aceitos por chamada de sincronização — evita payloads abusivos. */
     private const SYNC_MAX_ITEMS = 500;
