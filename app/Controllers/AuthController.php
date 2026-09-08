@@ -133,7 +133,7 @@ class AuthController extends Controller
     public function logout(): void
     {
         Auth::logout();
-        $this->redirect(url('/login'));
+        $this->redirect(url('/'));
     }
 
     public function showForgot(): void
