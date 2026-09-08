@@ -156,7 +156,13 @@
                     <li class="d-flex gap-3">
                         <i class="bi bi-bookmark-star flex-shrink-0 mt-1" style="color:var(--color-accent);"></i>
                         <span style="color:var(--color-text-secondary);font-size:.92rem;">
-                            Favoritos do Chrome, Edge ou Brave <strong style="color:var(--color-text-primary);">sincronizados automaticamente</strong> pra sua conta — sem importar de novo toda vez.
+                            Favoritos do Chrome, Edge, Brave ou Firefox <strong style="color:var(--color-text-primary);">sincronizados automaticamente</strong> pra sua conta — sem importar de novo toda vez.
+                        </span>
+                    </li>
+                    <li class="d-flex gap-3">
+                        <i class="bi bi-folder2-open flex-shrink-0 mt-1" style="color:var(--color-accent);"></i>
+                        <span style="color:var(--color-text-secondary);font-size:.92rem;">
+                            Ache também arquivos das pastas <strong style="color:var(--color-text-primary);">Downloads, Documentos e Área de Trabalho</strong> — opcional, desligado por padrão.
                         </span>
                     </li>
                     <li class="d-flex gap-3">
@@ -169,9 +175,10 @@
 
                 <p style="color:var(--color-text-muted);font-size:.78rem;max-width:440px;">
                     <i class="bi bi-info-circle me-1"></i>
-                    Busca apenas o que está na sua conta PRISMA (favoritos, links, QR Codes) — não
-                    lê arquivos nem pastas do seu computador. Sincronização de favoritos hoje cobre
-                    Chrome/Edge/Brave; Firefox ainda não é suportado.
+                    Por padrão busca só o que está na sua conta PRISMA (favoritos, links, QR Codes).
+                    A busca de arquivos locais e a sincronização de favoritos (Chrome, Edge, Brave e
+                    Firefox) são opt-in — nada é lido nem enviado sem você habilitar explicitamente
+                    nas Configurações. Arquivos locais nunca saem do seu computador.
                 </p>
 
                 <div class="d-flex flex-wrap align-items-center gap-3">
