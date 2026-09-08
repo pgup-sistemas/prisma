@@ -136,14 +136,15 @@
                 </h2>
                 <p style="color:var(--color-text-secondary);font-size:1rem;">
                     O PRISMA Launcher fica na bandeja do seu computador. Aperte o atalho, comece a
-                    digitar — ele já sabe o que você quer, mesmo errando a digitação.
+                    digitar — ele busca nos seus favoritos, links encurtados e QR Codes salvos na
+                    sua conta PRISMA, mesmo errando a digitação.
                 </p>
 
                 <ul class="list-unstyled d-flex flex-column gap-3 my-4">
                     <li class="d-flex gap-3">
                         <i class="bi bi-search flex-shrink-0 mt-1" style="color:var(--color-accent);"></i>
                         <span style="color:var(--color-text-secondary);font-size:.92rem;">
-                            Digite <code>"contrat"</code> e ele acha <strong style="color:var(--color-text-primary);">"Contrato Cliente XYZ.pdf"</strong> — mesmo com erro de digitação.
+                            Digite <code>"finance"</code> e ele acha o favorito <strong style="color:var(--color-text-primary);">"Sistema Financeiro"</strong> que você salvou mês passado — mesmo com erro de digitação.
                         </span>
                     </li>
                     <li class="d-flex gap-3">
@@ -155,23 +156,30 @@
                     <li class="d-flex gap-3">
                         <i class="bi bi-bookmark-star flex-shrink-0 mt-1" style="color:var(--color-accent);"></i>
                         <span style="color:var(--color-text-secondary);font-size:.92rem;">
-                            Favoritos do Chrome/Edge <strong style="color:var(--color-text-primary);">sincronizados automaticamente</strong> — sem importar de novo toda vez.
+                            Favoritos do Chrome, Edge ou Brave <strong style="color:var(--color-text-primary);">sincronizados automaticamente</strong> pra sua conta — sem importar de novo toda vez.
                         </span>
                     </li>
                     <li class="d-flex gap-3">
                         <i class="bi bi-window flex-shrink-0 mt-1" style="color:var(--color-accent);"></i>
                         <span style="color:var(--color-text-secondary);font-size:.92rem;">
-                            Funciona em <strong style="color:var(--color-text-primary);">qualquer programa</strong> — navegador, editor de texto, planilha, terminal.
+                            O atalho abre em <strong style="color:var(--color-text-primary);">qualquer programa</strong> — não precisa estar com o navegador aberto.
                         </span>
                     </li>
                 </ul>
+
+                <p style="color:var(--color-text-muted);font-size:.78rem;max-width:440px;">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Busca apenas o que está na sua conta PRISMA (favoritos, links, QR Codes) — não
+                    lê arquivos nem pastas do seu computador. Sincronização de favoritos hoje cobre
+                    Chrome/Edge/Brave; Firefox ainda não é suportado.
+                </p>
 
                 <div class="d-flex flex-wrap align-items-center gap-3">
                     <a href="<?= url('/download') ?>" class="btn btn-primary">
                         <i class="bi bi-download"></i> Baixar grátis
                     </a>
                     <span style="color:var(--color-text-muted);font-size:.82rem;">
-                        Windows, macOS e Linux — sem custo
+                        Grátis · Linux disponível agora, Windows/Mac em breve
                     </span>
                 </div>
             </div>
@@ -190,25 +198,25 @@
                     <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:14px;box-shadow:var(--shadow-lg);overflow:hidden;">
                         <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--color-border);">
                             <i class="bi bi-search" style="color:var(--color-text-muted);"></i>
-                            <span style="color:var(--color-text-primary);font-size:.95rem;">contrat</span>
+                            <span style="color:var(--color-text-primary);font-size:.95rem;">finance</span>
                         </div>
                         <div style="padding:6px;">
                             <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;background:rgba(46,134,171,.15);">
                                 <span style="width:26px;height:26px;border-radius:6px;background:var(--color-elevated);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="bi bi-file-earmark-pdf" style="font-size:.8rem;color:var(--color-accent);"></i>
+                                    <i class="bi bi-bookmark-star" style="font-size:.8rem;color:var(--color-accent);"></i>
                                 </span>
                                 <span>
-                                    <span style="display:block;font-size:.82rem;font-weight:500;color:var(--color-text-primary);">Contrato Cliente XYZ.pdf</span>
-                                    <span style="display:block;font-size:.72rem;color:var(--color-text-secondary);">drive.google.com/.../contrato-xyz</span>
+                                    <span style="display:block;font-size:.82rem;font-weight:500;color:var(--color-text-primary);">Sistema Financeiro</span>
+                                    <span style="display:block;font-size:.72rem;color:var(--color-text-secondary);">app.financeiro.com/dashboard</span>
                                 </span>
                             </div>
                             <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;">
                                 <span style="width:26px;height:26px;border-radius:6px;background:var(--color-elevated);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="bi bi-bookmark-star" style="font-size:.8rem;color:var(--color-accent);"></i>
+                                    <i class="bi bi-link-45deg" style="font-size:.8rem;color:var(--color-accent);"></i>
                                 </span>
                                 <span>
-                                    <span style="display:block;font-size:.82rem;font-weight:500;color:var(--color-text-primary);">Sistema de Contratos</span>
-                                    <span style="display:block;font-size:.72rem;color:var(--color-text-secondary);">app.contabilidade.com/contratos</span>
+                                    <span style="display:block;font-size:.82rem;font-weight:500;color:var(--color-text-primary);">Relatório financeiro Q3</span>
+                                    <span style="display:block;font-size:.72rem;color:var(--color-text-secondary);">localhost/prisma/r/fin-q3</span>
                                 </span>
                             </div>
                         </div>
