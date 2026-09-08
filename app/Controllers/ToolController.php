@@ -9,6 +9,7 @@ use App\Core\Middleware;
 use App\Services\CepService;
 use App\Services\CurrencyService;
 use App\Services\PdfCompressorService;
+use App\Services\PdfToMarkdownService;
 
 class ToolController extends Controller
 {
@@ -117,6 +118,53 @@ class ToolController extends Controller
             'pdf'             => 'data:application/pdf;base64,' . base64_encode($data),
             'original_size'   => (int) $file['size'],
             'compressed_size' => $compressedSize,
+        ]);
+    }
+
+    /**
+     * POST /tools/pdf-to-markdown — extrai o texto de um PDF (mesmo livros com
+     * muitas páginas) e devolve formatado como Markdown, um arquivo .md pra
+     * download. Não faz OCR: PDFs escaneados (imagem) não têm texto extraível
+     * e retornam aviso explícito em vez de um resultado vazio.
+     */
+    public function pdfToMarkdown(): void
+    {
+        Middleware::rateLimit('tools:pdf2md:' . $this->request->ip(), 10, 300);
+
+        if (!PdfToMarkdownService::isAvailable()) {
+            $this->json(['success' => false, 'error' => 'Recurso indisponível neste servidor no momento.'], 503);
+            return;
+        }
+
+        $file = $this->request->file('pdf');
+
+        if ($file === null || $file['error'] !== UPLOAD_ERR_OK || $file['size'] <= 0) {
+            $this->json(['success' => false, 'error' => 'Selecione um arquivo PDF válido.'], 422);
+            return;
+        }
+
+        if ($file['size'] > 40 * 1024 * 1024) {
+            $this->json(['success' => false, 'error' => 'Arquivo muito grande (máx. 40MB).'], 422);
+            return;
+        }
+
+        if (!validMime($file['tmp_name'], ['application/pdf'])) {
+            $this->json(['success' => false, 'error' => 'Envie um arquivo PDF válido.'], 422);
+            return;
+        }
+
+        $result = PdfToMarkdownService::convert($file['tmp_name']);
+
+        if ($result === null) {
+            $this->json(['success' => false, 'error' => 'Falha ao converter o PDF. Tente outro arquivo.'], 500);
+            return;
+        }
+
+        $this->json([
+            'success'        => true,
+            'markdown'       => $result['markdown'],
+            'pages'          => $result['pages'],
+            'likely_scanned' => $result['likely_scanned'],
         ]);
     }
 }

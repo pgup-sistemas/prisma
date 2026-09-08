@@ -24,6 +24,7 @@ return function (Router $r) {
     $r->post('/tools/currency', 'ToolController@currency');
     $r->post('/tools/cep',      'ToolController@cep');
     $r->post('/tools/pdf-compress', 'ToolController@pdfCompress');
+    $r->post('/tools/pdf-to-markdown', 'ToolController@pdfToMarkdown');
 
     // PRISMA Launcher — agente de desktop, público
     $r->get('/download',              'LauncherAgentController@index');

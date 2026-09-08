@@ -13,6 +13,7 @@
         $tools = [
             'image'     => ['bi-image',              'Imagens'],
             'pdf'       => ['bi-file-earmark-pdf',    'Reduzir PDF'],
+            'pdf2md'    => ['bi-markdown',            'PDF → Markdown'],
             'cep'       => ['bi-geo-alt',            'CEP'],
             'docs'      => ['bi-person-vcard',       'CPF/CNPJ'],
             'password'  => ['bi-shield-lock',        'Senha'],
@@ -112,6 +113,37 @@
                 <div id="pdf-result" class="d-none mt-3 p-3 rounded" style="background:var(--color-elevated);max-width:420px;">
                     <div id="pdf-sizes" style="color:var(--color-text-secondary);"></div>
                     <a id="pdf-download" class="btn btn-sm btn-outline-light mt-2" download="pdf-reduzido.pdf"><i class="bi bi-download"></i> Baixar PDF reduzido</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF para Markdown -->
+        <div class="tab-pane fade" id="tool-pdf2md">
+            <div class="card p-4">
+                <h5 class="display-font mb-3"><i class="bi bi-markdown"></i> PDF → Markdown</h5>
+                <p class="small mb-2" style="color:var(--color-text-muted);">
+                    Extrai o texto do PDF (funciona bem com livros e documentos de muitas páginas) e
+                    gera um arquivo <code>.md</code>, separado por página. Processa no servidor. Máx. 40MB.
+                </p>
+                <div class="alert alert-warning small py-2 px-3 mb-3" style="max-width:520px;background:rgba(245,158,11,.1);border-color:var(--color-warning);color:var(--color-text-primary);">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    <strong>Não funciona com PDFs escaneados</strong> (só imagem, sem texto selecionável) —
+                    isso não faz OCR. Se o seu PDF veio de um scanner/foto, o resultado sairá vazio.
+                </div>
+                <input type="file" id="pdf2md-input" class="form-control form-control-sm mb-3" accept="application/pdf" style="max-width:400px;">
+                <button class="btn btn-primary btn-sm" id="pdf2md-submit" onclick="Tools.pdf2md.convert(this)">
+                    <i class="bi bi-arrow-repeat"></i> Converter para Markdown
+                </button>
+                <div id="pdf2md-error" class="text-danger small mt-2"></div>
+                <div id="pdf2md-scanned-warning" class="d-none alert alert-danger small mt-3 py-2 px-3" style="max-width:520px;">
+                    <i class="bi bi-exclamation-octagon-fill me-1"></i>
+                    Este PDF parece ser digitalizado (imagem) — quase nenhum texto foi encontrado.
+                    O arquivo abaixo provavelmente virá vazio ou incompleto.
+                </div>
+                <div id="pdf2md-result" class="d-none mt-3 p-3 rounded" style="background:var(--color-elevated);max-width:520px;">
+                    <div id="pdf2md-info" style="color:var(--color-text-secondary);" class="mb-2"></div>
+                    <a id="pdf2md-download" class="btn btn-sm btn-outline-light" download="documento.md"><i class="bi bi-download"></i> Baixar .md</a>
+                    <pre id="pdf2md-preview" class="small mt-3 mb-0" style="max-height:200px;overflow-y:auto;white-space:pre-wrap;color:var(--color-text-secondary);"></pre>
                 </div>
             </div>
         </div>
@@ -630,6 +662,57 @@
                             ? ' <strong style="color:var(--color-success);">(-' + reduction + '%)</strong>'
                             : ' <span style="color:var(--color-text-muted);">(já estava otimizado)</span>');
                     document.getElementById('pdf-download').href = d.pdf;
+                    resultEl.classList.remove('d-none');
+                })
+                .catch(function () {
+                    btn.disabled = false;
+                    btn.innerHTML = originalLabel;
+                    errorEl.textContent = 'Erro de conexão.';
+                });
+        }
+    };
+
+    // ── PDF para Markdown ────────────────────────────────────────────────
+    Tools.pdf2md = {
+        convert: function (btn) {
+            var input = document.getElementById('pdf2md-input');
+            var errorEl = document.getElementById('pdf2md-error');
+            var resultEl = document.getElementById('pdf2md-result');
+            var scannedWarning = document.getElementById('pdf2md-scanned-warning');
+            errorEl.textContent = '';
+            resultEl.classList.add('d-none');
+            scannedWarning.classList.add('d-none');
+
+            if (!input.files[0]) { errorEl.textContent = 'Selecione um arquivo PDF.'; return; }
+            if (input.files[0].size > 40 * 1024 * 1024) { errorEl.textContent = 'Arquivo muito grande (máx. 40MB).'; return; }
+
+            var fd = new FormData();
+            fd.append('pdf', input.files[0]);
+
+            var originalLabel = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Convertendo…';
+
+            fetch(<?= json_encode(url('/tools/pdf-to-markdown')) ?>, { method: 'POST', body: fd })
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalLabel;
+                    if (!d.success) { errorEl.textContent = d.error || 'Erro ao converter PDF.'; return; }
+
+                    if (d.likely_scanned) {
+                        scannedWarning.classList.remove('d-none');
+                    }
+
+                    document.getElementById('pdf2md-info').textContent = d.pages + ' página(s) processada(s).';
+                    document.getElementById('pdf2md-preview').textContent = d.markdown.slice(0, 1500) + (d.markdown.length > 1500 ? '\n\n…' : '');
+
+                    var blob = new Blob([d.markdown], { type: 'text/markdown;charset=utf-8' });
+                    var blobUrl = URL.createObjectURL(blob);
+                    var downloadBtn = document.getElementById('pdf2md-download');
+                    downloadBtn.href = blobUrl;
+                    downloadBtn.download = (input.files[0].name.replace(/\.pdf$/i, '') || 'documento') + '.md';
+
                     resultEl.classList.remove('d-none');
                 })
                 .catch(function () {
