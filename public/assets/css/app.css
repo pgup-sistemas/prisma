@@ -86,12 +86,37 @@ h1, h2, h3, .display-font { font-family: var(--font-display); }
 
 .sidebar-wrap {
     width: 240px;
-    flex-shrink: 0;
     overflow: hidden;
     transition: width .2s ease;
 }
 .sidebar-wrap.collapsed { width: 0; }
 .sidebar-wrap.no-transition { transition: none; }
+
+/* Setinha fixada na borda do sidebar — position:fixed (não depende do container
+   que colapsa) e o "left" é setado direto via JS, não por cascata de classes,
+   pra não correr risco de ficar escondida atrás do conteúdo principal. */
+.sidebar-edge-toggle {
+    position: fixed;
+    top: 68px;
+    left: 240px;
+    z-index: 1030;
+    width: 20px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    background: var(--color-elevated);
+    color: var(--color-text-secondary);
+    font-size: .8rem;
+    box-shadow: var(--shadow-sm);
+    transition: left .2s ease, background .15s;
+}
+.sidebar-edge-toggle:hover { background: rgba(46,134,171,.15); color: var(--color-text-primary); }
+.sidebar-edge-toggle.no-transition { transition: none; }
 
 .navbar .nav-link, .navbar .navbar-brand { color: var(--color-text-primary) !important; }
 .navbar .nav-link:hover { color: var(--color-accent) !important; }

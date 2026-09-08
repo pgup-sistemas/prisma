@@ -19,9 +19,6 @@
         <button class="btn btn-sm btn-outline-light d-lg-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
             <i class="bi bi-list"></i>
         </button>
-        <button id="sidebar-collapse-toggle" class="btn btn-sm btn-outline-light d-none d-lg-inline-flex me-2" type="button" title="Recolher menu" onclick="prismaToggleSidebar()">
-            <i class="bi bi-layout-sidebar-inset"></i>
-        </button>
         <a class="navbar-brand display-font d-flex align-items-center gap-2" href="<?= url('/dashboard') ?>" style="color:var(--color-text-primary);">
             <img src="<?= asset('img/logo.svg') ?>" height="28" alt="">PRISMA
         </a>
@@ -100,11 +97,17 @@
             </div>
         <?php }; ?>
 
-        <div id="sidebar-desktop" class="d-none d-lg-block sidebar-wrap">
-            <div style="width:240px;">
-                <?php $sidebarContent(); ?>
+        <div id="sidebar-desktop-outer" class="d-none d-lg-block flex-shrink-0">
+            <div id="sidebar-desktop" class="sidebar-wrap">
+                <div style="width:240px;">
+                    <?php $sidebarContent(); ?>
+                </div>
             </div>
         </div>
+
+        <button id="sidebar-collapse-toggle" class="sidebar-edge-toggle d-none d-lg-flex" type="button" title="Recolher menu" onclick="prismaToggleSidebar()">
+            <i class="bi bi-chevron-left" id="sidebar-toggle-icon"></i>
+        </button>
 
         <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" style="background:var(--color-surface);width:240px;">
             <div class="offcanvas-header">
@@ -141,18 +144,31 @@
         if (ic) ic.className = t === 'dark' ? 'bi bi-moon-stars-fill' : 'bi bi-sun-fill';
     })();
 
+    function prismaApplySidebarState(collapsed) {
+        var inner = document.getElementById('sidebar-desktop');
+        var toggle = document.getElementById('sidebar-collapse-toggle');
+        var icon = document.getElementById('sidebar-toggle-icon');
+        if (inner) inner.classList.toggle('collapsed', collapsed);
+        if (toggle) toggle.style.left = collapsed ? '0px' : '240px';
+        if (icon) icon.className = collapsed ? 'bi bi-chevron-right' : 'bi bi-chevron-left';
+    }
     function prismaToggleSidebar() {
-        var el = document.getElementById('sidebar-desktop');
-        var collapsed = el.classList.toggle('collapsed');
+        var inner = document.getElementById('sidebar-desktop');
+        var collapsed = !inner.classList.contains('collapsed');
+        prismaApplySidebarState(collapsed);
         localStorage.setItem('prisma-sidebar-collapsed', collapsed ? '1' : '0');
     }
     // Restaura o estado salvo (sem transição no load, pra não "piscar")
     (function(){
         if (localStorage.getItem('prisma-sidebar-collapsed') === '1') {
-            var el = document.getElementById('sidebar-desktop');
-            if (el) el.classList.add('collapsed', 'no-transition');
+            var inner = document.getElementById('sidebar-desktop');
+            var toggle = document.getElementById('sidebar-collapse-toggle');
+            if (inner) inner.classList.add('no-transition');
+            if (toggle) toggle.classList.add('no-transition');
+            prismaApplySidebarState(true);
             requestAnimationFrame(function () {
-                if (el) el.classList.remove('no-transition');
+                if (inner) inner.classList.remove('no-transition');
+                if (toggle) toggle.classList.remove('no-transition');
             });
         }
     })();
