@@ -22,7 +22,9 @@
         <button id="sidebar-collapse-toggle" class="btn btn-sm btn-outline-light d-none d-lg-inline-flex me-2" type="button" title="Recolher menu" onclick="prismaToggleSidebar()">
             <i class="bi bi-layout-sidebar-inset"></i>
         </button>
-        <a class="navbar-brand display-font" href="<?= url('/dashboard') ?>" style="color:var(--color-text-primary);">PRISMA</a>
+        <a class="navbar-brand display-font d-flex align-items-center gap-2" href="<?= url('/dashboard') ?>" style="color:var(--color-text-primary);">
+            <img src="<?= asset('img/logo.svg') ?>" height="28" alt="">PRISMA
+        </a>
         <div class="ms-auto d-flex align-items-center gap-3">
             <button id="theme-toggle" class="btn btn-sm btn-outline-light" title="Alternar tema" onclick="prismaToggleTheme()">
                 <i class="bi bi-moon-stars-fill" id="theme-icon"></i>
