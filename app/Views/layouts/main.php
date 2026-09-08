@@ -19,6 +19,9 @@
         <button class="btn btn-sm btn-outline-light d-lg-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
             <i class="bi bi-list"></i>
         </button>
+        <button id="sidebar-collapse-toggle" class="btn btn-sm btn-outline-light d-none d-lg-inline-flex me-2" type="button" title="Recolher menu" onclick="prismaToggleSidebar()">
+            <i class="bi bi-layout-sidebar-inset"></i>
+        </button>
         <a class="navbar-brand display-font" href="<?= url('/dashboard') ?>" style="color:var(--color-text-primary);">PRISMA</a>
         <div class="ms-auto d-flex align-items-center gap-3">
             <button id="theme-toggle" class="btn btn-sm btn-outline-light" title="Alternar tema" onclick="prismaToggleTheme()">
@@ -95,8 +98,10 @@
             </div>
         <?php }; ?>
 
-        <div class="d-none d-lg-block" style="width:240px;flex-shrink:0;">
-            <?php $sidebarContent(); ?>
+        <div id="sidebar-desktop" class="d-none d-lg-block sidebar-wrap">
+            <div style="width:240px;">
+                <?php $sidebarContent(); ?>
+            </div>
         </div>
 
         <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" style="background:var(--color-surface);width:240px;">
@@ -132,6 +137,22 @@
         var t = localStorage.getItem('prisma-theme') || 'dark';
         var ic = document.getElementById('theme-icon');
         if (ic) ic.className = t === 'dark' ? 'bi bi-moon-stars-fill' : 'bi bi-sun-fill';
+    })();
+
+    function prismaToggleSidebar() {
+        var el = document.getElementById('sidebar-desktop');
+        var collapsed = el.classList.toggle('collapsed');
+        localStorage.setItem('prisma-sidebar-collapsed', collapsed ? '1' : '0');
+    }
+    // Restaura o estado salvo (sem transição no load, pra não "piscar")
+    (function(){
+        if (localStorage.getItem('prisma-sidebar-collapsed') === '1') {
+            var el = document.getElementById('sidebar-desktop');
+            if (el) el.classList.add('collapsed', 'no-transition');
+            requestAnimationFrame(function () {
+                if (el) el.classList.remove('no-transition');
+            });
+        }
     })();
     </script>
 </body>
