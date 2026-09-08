@@ -68,6 +68,7 @@ body {
     color: var(--color-text-primary);
     font-family: var(--font-sans);
     transition: background-color .2s, color .2s;
+    overflow-x: hidden; /* linhas Bootstrap com gutter (.g-5 etc.) podem passar 1 rem do viewport em telas bem estreitas */
 }
 
 h1, h2, h3, .display-font { font-family: var(--font-display); }
