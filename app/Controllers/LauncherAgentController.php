@@ -22,30 +22,49 @@ class LauncherAgentController extends Controller
     /** Limite de itens aceitos por chamada de sincronização — evita payloads abusivos. */
     private const SYNC_MAX_ITEMS = 500;
 
-    private const DOWNLOADS = [
-        'linux' => [
-            'available' => true,
-            'file'      => '/downloads/PRISMA-Launcher-0.1.0-linux.AppImage',
-            'label'     => '.AppImage',
-        ],
-        'windows' => [
-            'available' => false,
-            'file'      => null,
-            'label'     => '.exe',
-        ],
-        'mac' => [
-            'available' => false,
-            'file'      => null,
-            'label'     => '.dmg',
-        ],
-    ];
+    /**
+     * URLs "latest" do GitHub Releases — sempre resolvem pra versão mais recente
+     * publicada, desde que o nome do arquivo (definido no build do electron-builder,
+     * artifactName) não mude entre versões. Assim esta página nunca precisa ser
+     * editada de novo a cada release nova do Launcher.
+     */
+    private const RELEASES_BASE = 'https://github.com/pgup-sistemas/prisma-launcher/releases/latest/download/';
+
+    /**
+     * @return array<string, array{available: bool, variants: array<array{url: string, label: string}>}>
+     */
+    private static function downloads(): array
+    {
+        return [
+            'linux' => [
+                'available' => true,
+                'variants'  => [
+                    ['url' => self::RELEASES_BASE . 'PRISMA-Launcher.AppImage', 'label' => '.AppImage'],
+                    ['url' => self::RELEASES_BASE . 'PRISMA-Launcher.deb', 'label' => '.deb'],
+                ],
+            ],
+            'windows' => [
+                'available' => true,
+                'variants'  => [
+                    ['url' => self::RELEASES_BASE . 'PRISMA-Launcher-Setup.exe', 'label' => '.exe'],
+                ],
+            ],
+            'mac' => [
+                'available' => true,
+                'variants'  => [
+                    ['url' => self::RELEASES_BASE . 'PRISMA-Launcher-arm64.dmg', 'label' => 'Apple Silicon (M1/M2/M3)'],
+                    ['url' => self::RELEASES_BASE . 'PRISMA-Launcher-x64.dmg', 'label' => 'Intel'],
+                ],
+            ],
+        ];
+    }
 
     public function index(): void
     {
         $this->render('download/index', [
             'title'            => 'Baixar o PRISMA Launcher — busca ultrarrápida no seu desktop',
             'meta_description' => 'Instale o PRISMA Launcher e acesse seus favoritos, links e QR Codes com um atalho global, direto do seu computador.',
-            'downloads'        => self::DOWNLOADS,
+            'downloads'        => self::downloads(),
             'version'          => self::LATEST_VERSION,
             'loggedIn'         => Auth::check(),
         ], 'public');

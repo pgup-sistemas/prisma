@@ -30,12 +30,16 @@
                     </div>
                     <h5 class="display-font" style="color:var(--color-text-primary);"><?= e($meta['label']) ?></h5>
                     <p class="small mb-3" style="color:var(--color-text-muted);">
-                        PRISMA Launcher <?= e($version) ?> · <?= e($d['label']) ?>
+                        PRISMA Launcher <?= e($version) ?>
                     </p>
                     <?php if ($d['available']): ?>
-                        <a href="<?= url($d['file']) ?>" class="btn btn-primary mt-auto" download>
-                            <i class="bi bi-download me-1"></i>Baixar
-                        </a>
+                        <div class="d-flex flex-column gap-2 mt-auto">
+                            <?php foreach ($d['variants'] as $variant): ?>
+                                <a href="<?= e($variant['url']) ?>" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-download me-1"></i>Baixar <?= e($variant['label']) ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
                     <?php else: ?>
                         <button class="btn btn-outline-secondary mt-auto" disabled style="border-color:var(--color-border);color:var(--color-text-muted);">
                             Em breve
