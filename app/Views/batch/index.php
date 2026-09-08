@@ -23,6 +23,11 @@
                         <option value="phone">Telefone</option>
                         <option value="whatsapp">WhatsApp</option>
                     </select>
+                    <small style="color:var(--color-text-muted);">
+                        Só tipos de campo único. PIX, vCard, Wi-Fi, Evento e Localização têm mais de um
+                        campo e não cabem num item por linha — gere um de cada vez em
+                        <a href="<?= url('/generate') ?>">Gerar QR</a>.
+                    </small>
                 </div>
 
                 <div class="mb-3">
