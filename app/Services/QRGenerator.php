@@ -176,7 +176,10 @@ class QRGenerator
         $lines = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
+            'PRODID:-//PRISMA//QR Code Generator//PT',
             'BEGIN:VEVENT',
+            'UID:' . uuid4() . '@prisma.app',
+            'DTSTAMP:' . gmdate('Ymd\THis\Z'),
             'SUMMARY:' . $this->escapeVCard($title),
         ];
 
